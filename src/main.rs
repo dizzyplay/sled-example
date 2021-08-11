@@ -35,13 +35,30 @@ impl TodoList {
         Ok(())
     }
 
+    fn toggle_done(&mut self, id: String) {
+        let todo = self.db.get(id.as_bytes()).unwrap();
+        match todo {
+            Some(todo) => {
+                let s = str::from_utf8(&todo).unwrap();
+                let mut todo: Todo = serde_json::from_str(s).unwrap();
+                todo.is_done = !todo.is_done;
+                self.db
+                    .insert(
+                        id.as_bytes(),
+                        serde_json::to_string(&todo).unwrap().as_bytes(),
+                    )
+                    .unwrap();
+            }
+            None => {}
+        }
+    }
+
     fn get(&self, id: String) -> Option<Todo> {
         let todo = self.db.get(id.as_bytes()).unwrap();
         match todo {
             Some(todo) => {
                 let s = str::from_utf8(&todo).unwrap();
                 let todo: Todo = serde_json::from_str(s).unwrap();
-                println!("{}", s);
                 Some(todo)
             }
             None => None,
@@ -56,6 +73,9 @@ async fn main() -> Result<()> {
     todo_list.add(format!("thisis good"))?;
     let todo = todo_list.get(format!("1"));
     println!("{:?}", todo);
+    let todo = todo_list.get(format!("2"));
+    println!("{:?}", todo);
+    todo_list.toggle_done(format!("2"));
     let todo = todo_list.get(format!("2"));
     println!("{:?}", todo);
     Ok(())
