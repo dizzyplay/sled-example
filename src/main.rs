@@ -68,9 +68,9 @@ impl TodoList {
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    let mut todo_list = TodoList::new("new_todos".to_string());
-    todo_list.add(format!("ok"))?;
-    todo_list.add(format!("thisis good"))?;
+    let mut todo_list = TodoList::new("my_db".to_string());
+    //todo_list.add(format!("ok"))?;
+    //todo_list.add(format!("thisis good"))?;
     let todo = todo_list.get(format!("1"));
     println!("{:?}", todo);
     let todo = todo_list.get(format!("2"));
