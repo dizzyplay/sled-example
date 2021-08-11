@@ -80,28 +80,3 @@ async fn main() -> Result<()> {
     println!("{:?}", todo);
     Ok(())
 }
-
-async fn n() -> Result<()> {
-    let config = Config::new().temporary(true);
-    fn m(_k: &[u8], old: Option<&[u8]>, new: &[u8]) -> Option<Vec<u8>> {
-        println!("e");
-        Some(new.to_vec())
-    }
-    let db = config.open()?;
-    db.set_merge_operator(m);
-    let k = b"1".to_vec();
-    db.merge(k.clone(), br#"{"a":1}"#)?;
-    let r = db.get(k)?;
-    println!("{}", std::str::from_utf8(&r.unwrap()).unwrap());
-
-    my(db.clone()).await?;
-
-    Ok(())
-}
-
-async fn my(db: sled::Db) -> Result<()> {
-    db.merge(b"ok", b"this is async fn in")?;
-    let r = db.get(b"1").unwrap();
-    println!("{}", std::str::from_utf8(&r.unwrap()).unwrap());
-    Ok(())
-}
